@@ -4,7 +4,7 @@ import './App.css';
 //firebase attributes
 import * as firebase from 'firebase';
 //components
-import FirebaseValues from './components/FirebaseValues';
+import DisplayFirebaseValues from './components/DisplayFirebaseValues';
 
 //config for firebase
 const config = {
@@ -28,19 +28,18 @@ class App extends Component {
       creator: '',
       firebaseList: {},
       firebaseValuesArray: [],
-      firebaseKeysArray: [],
       firebaseUIDArray: []
     }
   }
   componentDidMount(){
     dbRef.on('value', snap => {
       this.setState({
+        firebaseList: snap.val(),
         firebaseUIDArray: Object.keys(snap.val())
-      }, () => console.log('firebaseUIDArray: ', this.state.firebaseUIDArray));
-      console.log(snap.val());
-      console.log('firebaseKeysArray: ', Object.keys(snap.val()));
-      console.log('firebaseRoomNameArray: ', Object.values(snap.val()).map((v) => v.roomName));
-      console.log('firebaseCreatorArray: ', Object.values(snap.val()).map((v) => v["creator"]));
+      }, () => {
+        console.log('firebaseUIDArray: ', this.state.firebaseUIDArray);
+        console.log('firebaseList: ', this.state.firebaseList);
+      });
     });
   }
 
@@ -89,7 +88,7 @@ class App extends Component {
         <button onClick={this.handleSubmitText.bind(this)}>Add Room</button>
 
         <p>Text: {this.state.text}</p>
-        <FirebaseValues firebaseValuesArray={this.state.firebaseValuesArray} />
+        <DisplayFirebaseValues firebaseList={this.state.firebaseList} />
       </div>
     );
   }
