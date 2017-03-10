@@ -17,7 +17,7 @@ const config = {
 };
 
 //setup dbRef constant to: 1. Initialize firebase, 2. Connect to firebase database(), 3. Find the location
-const dbRef = firebase.initializeApp(config).database().ref().child('text');
+const dbRef = firebase.initializeApp(config).database().ref().child('rooms');
 
 class App extends Component {
   //setup initial state
@@ -36,14 +36,9 @@ class App extends Component {
     //on is an event listener that listens to any changes done to firebase
     dbRef.on('value', snap => {
       console.log(snap.val());
-      this.setState({
-        firebaseList: snap.val(),
-        firebaseValuesArray: Object.values(snap.val()),
-        firebaseKeysArray: Object.keys(snap.val())
-      });
-      console.log('firebaseList:  ', this.state.firebaseList);
-      console.log('firebaseValuesArray: ', this.state.firebaseValuesArray);
-      console.log('firebaseKeysArray: ', this.state.firebaseKeysArray);
+      console.log('firebaseKeysArray: ', Object.keys(snap.val()));
+      console.log('firebaseRoomNameArray: ', Object.values(snap.val()).map((v) => v.roomName));
+      console.log('firebaseCreatorArray: ', Object.values(snap.val()).map((v) => v["creator"]));
     });
   }
   handleSubmitText(){
