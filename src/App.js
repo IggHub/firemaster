@@ -55,6 +55,10 @@ class App extends Component {
     });
   }
 
+  removeItem(index){
+    dbRef.child(index).remove();
+  }
+
   //update state of text
   handleTextState(e){
     this.setState({
@@ -88,7 +92,7 @@ class App extends Component {
         <button onClick={this.handleSubmitText.bind(this)}>Add Room</button>
 
         <p>Text: {this.state.text}</p>
-        <DisplayFirebaseValues firebaseList={this.state.firebaseList} />
+        <DisplayFirebaseValues removeItem={this.removeItem.bind(this)} firebaseList={this.state.firebaseList} />
       </div>
     );
   }

@@ -6,19 +6,14 @@ class DisplayFirebaseValues extends React.Component{
 //      return <li key={index}>{firebaseitem.roomName}</li>
 //    })
     const firebaseUID = Object.keys(this.props.firebaseList).map((firebaseItem, index) => {
-      return <li key={index}>{firebaseItem}</li>
+      return <li key={index}><a href="#" onClick={() => this.props.removeItem(firebaseItem)}>X</a> {firebaseItem}</li>
     })
 
     const firebaseListValues = Object.values(this.props.firebaseList);
-    console.log('firebaseListValues: ', firebaseListValues);
 
     const firebaseListRoomName = firebaseListValues.map((firebaseItem, index) => {
-      return <li key={index}>{firebaseItem.roomName}</li>
+      return <li key={index}>RoomName: {firebaseItem.roomName} | Creator: {firebaseItem.creator}</li>
     })
-    const firebaseListCreator = firebaseListValues.map((firebaseItem, index) => {
-      return <li key={index}>{firebaseItem.creator}</li>
-    })
-    console.log('firebaseList from display: ', this.props.firebaseList)
     return (
       <div>
         <div>
@@ -29,10 +24,6 @@ class DisplayFirebaseValues extends React.Component{
           <p>Hello firebase roomName! </p>
           <ul>
             {firebaseListRoomName}
-          </ul>
-          <p>Hello firebase creators!</p>
-          <ul>
-            {firebaseListCreator}
           </ul>
         </div>
       </div>
