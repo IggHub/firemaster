@@ -8,16 +8,16 @@ class DisplayFirebaseValues extends React.Component{
     })
     const firebaseListValues = Object.values(this.props.firebaseList);
     const firebaseListRoomName = firebaseListValues.map((firebaseItem, index) => {
-      return <li key={index}>RoomName: {firebaseItem.roomName} | creator: {firebaseItem.creator} | at: {firebaseItem.createdAt} | roomDesc: {firebaseItem.roomDesc}</li>
+      return <li key={index}>RoomName: {firebaseItem.roomName} | creator: {firebaseItem.creator} | room created at: {firebaseItem.roomCreatedAt} | roomDesc: {firebaseItem.roomDesc}</li>
     })
     return (
       <div>
         <div>
-          <p>Hello firebase UID Keys!</p>
+          <p>Firebase UID Keys:</p>
           <ul>
             {firebaseUID}
           </ul>
-          <p>Hello firebase roomName! </p>
+          <p>Firebase room info</p>
           <ul>
             {firebaseListRoomName}
           </ul>

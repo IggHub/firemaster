@@ -5,7 +5,6 @@ import * as firebase from 'firebase';
 import moment from 'moment';
 import DisplayFirebaseValues from './components/DisplayFirebaseValues';
 
-//config for firebase
 const config = {
   apiKey: "AIzaSyDyX1F_BohfqXWzDFFZfJgyo4MBjApbVyQ",
   authDomain: "firemaster-fcec2.firebaseapp.com",
@@ -15,7 +14,9 @@ const config = {
 };
 
 //setup dbRef constant to: 1. Initialize firebase, 2. Connect to firebase database(), 3. Find the location
-const dbRef = firebase.initializeApp(config).database().ref().child('rooms');
+const dbRef = firebase.initializeApp(config).database().ref();
+const roomsRef = dbRef.child('rooms');
+const messagesRef = dbRef.child('messages');
 
 class App extends Component {
   //setup initial state
@@ -25,15 +26,19 @@ class App extends Component {
       text: '',
       roomName: '',
       creator: '',
-      createdAt: '',
+      roomCreatedAt: '',
       roomDesc: '',
+      content: '',
+      messageCreatedAt: '',
+      roomId: '',
+      userName: '',
       firebaseList: {},
       firebaseValuesArray: [],
       firebaseUIDArray: []
     }
   }
   componentDidMount(){
-    dbRef.on('value', snap => {
+    roomsRef.on('value', snap => {
       this.setState({
         firebaseList: snap.val(),
         firebaseUIDArray: Object.keys(snap.val())
@@ -49,23 +54,38 @@ class App extends Component {
     //})
   }
 
-  handleSubmitText(){
-    dbRef.push({
+  handleSubmitRoom(){
+    roomsRef.push({
       roomName: this.state.roomName,
       creator: this.state.creator,
       roomDesc: this.state.roomDesc,
-      createdAt: this.state.createdAt
+      roomCreatedAt: this.state.roomCreatedAt
     });
     this.setState({
       roomName: '',
       creator: '',
-      createdAt: '',
+      roomCreatedAt: '',
       roomDesc: ''
     });
   }
 
+  handleSubmitMessage(){
+    messagesRef.push({
+      roomId: this.state.roomId,
+      content: this.state.content,
+      userName: this.state.userName,
+      messageCreatedAt: this.state.messageCreatedAt
+    });
+    this.setState({
+      roomId: '',
+      content: '',
+      userName: '',
+      messageCreatedAt: ''
+    })
+  }
+
   removeItem(index){
-    dbRef.child(index).remove();
+    roomsRef.child(index).remove();
   }
 
   //update state of text
@@ -77,13 +97,17 @@ class App extends Component {
   handleRoomInfo(e){
     this.setState({
       [e.target.name]: e.target.value,
-      createdAt: moment().format('MMMM Do YYYY, hh:mm:ss a')
+      roomCreatedAt: moment().format('MMMM Do YYYY, hh:mm:ss a')
     })
   }
 
-  getRoom(){
-
+  handleMessageInfo(e){
+    this.setState({
+      [e.target.name]: e.target.value,
+      messageCreatedAt: moment().format('MMMM Do YYYY, hh:mm:ss a')
+    })
   }
+
   render() {
     return (
       <div className="App">
@@ -94,17 +118,28 @@ class App extends Component {
         <h1 id="bigOne">I am a big one</h1>
         <h2>{moment().format('MMMM Do YYYY, hh:mm:ss a')}</h2>
         <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
+          Enter room info
         </p>
-        <form onSubmit={this.handleSubmitText.bind(this)} >
+
+        <form onSubmit={this.handleSubmitRoom.bind(this)} >
           <input type="text" ref="roomNameItem" name="roomName" value={this.state.roomName} placeholder="room name" onChange={this.handleRoomInfo.bind(this)}></input>
           <input type="text" ref="creatorItem" name="creator" value={this.state.creator} placeholder="creator" onChange={this.handleRoomInfo.bind(this)}></input>
-          <input type="text" ref="roomDescItem" name="roomDesc" value={this.state.roomDesc} placeholder="roomDescf" onChange={this.handleRoomInfo.bind(this)}></input>
+          <input type="text" ref="roomDescItem" name="roomDesc" value={this.state.roomDesc} placeholder="roomDesc" onChange={this.handleRoomInfo.bind(this)}></input>
           <input type="submit" value="Add Room" />
         </form>
+
+        <p>Messages:</p>
+
+        <form onSubmit={this.handleSubmitMessage.bind(this)} >
+          <input type="text" ref="contentItem" name="content" value={this.state.content} placeholder="message content" onChange={this.handleMessageInfo.bind(this)} />
+          <input type="text" ref="roomIdItem" name="roomId" value={this.state.roomId} placeholder="roomId" onChange={this.handleMessageInfo.bind(this)} />
+          <input type="text" ref="userNameItem" name="userName" value={this.state.userName} placeholder="userName" onChange={this.handleMessageInfo.bind(this)} />
+          <input type="submit" value="Add message" />
+        </form>
+
         <p>Text: {this.state.text}</p>
+
         <DisplayFirebaseValues removeItem={this.removeItem.bind(this)} firebaseList={this.state.firebaseList} />
-        <button onClick={this.getRoom.bind(this)}>GET THIS CHILD</button>
       </div>
     );
   }
