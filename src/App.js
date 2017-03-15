@@ -24,9 +24,9 @@ class App extends Component {
     this.state = {
       text: '',
       roomName: '',
-      userName: '',
+      creator: '',
       createdAt: '',
-      content: '',
+      roomDesc: '',
       firebaseList: {},
       firebaseValuesArray: [],
       firebaseUIDArray: []
@@ -42,23 +42,25 @@ class App extends Component {
         console.log('firebaseList: ', this.state.firebaseList);
       });
     });
-    dbRef.orderByChild('roomName').equalTo('Room1').on('child_added', (snap) => {
-      console.log('getRoom equalTo orderbychild(room1): ', snap.val());
-    })
+    //recreate another 'dbRef' that points to messages node.
+    //room1 will be dynamic (whatever user clicks)
+    //dbRef.orderByChild('roomName').equalTo('Room1').on('child_added', (snap) => {
+    //  console.log('getRoom equalTo orderbychild(room1): ', snap.val());
+    //})
   }
 
   handleSubmitText(){
     dbRef.push({
       roomName: this.state.roomName,
-      userName: this.state.userName,
-      content: this.state.content,
+      creator: this.state.creator,
+      roomDesc: this.state.roomDesc,
       createdAt: this.state.createdAt
     });
     this.setState({
       roomName: '',
-      userName: '',
+      creator: '',
       createdAt: '',
-      content: ''
+      roomDesc: ''
     });
   }
 
@@ -96,8 +98,8 @@ class App extends Component {
         </p>
         <form onSubmit={this.handleSubmitText.bind(this)} >
           <input type="text" ref="roomNameItem" name="roomName" value={this.state.roomName} placeholder="room name" onChange={this.handleRoomInfo.bind(this)}></input>
-          <input type="text" ref="userNameItem" name="userName" value={this.state.userName} placeholder="username" onChange={this.handleRoomInfo.bind(this)}></input>
-          <input type="text" ref="contentItem" name="content" value={this.state.content} placeholder="content" onChange={this.handleRoomInfo.bind(this)}></input>
+          <input type="text" ref="creatorItem" name="creator" value={this.state.creator} placeholder="creator" onChange={this.handleRoomInfo.bind(this)}></input>
+          <input type="text" ref="roomDescItem" name="roomDesc" value={this.state.roomDesc} placeholder="roomDescf" onChange={this.handleRoomInfo.bind(this)}></input>
           <input type="submit" value="Add Room" />
         </form>
         <p>Text: {this.state.text}</p>
