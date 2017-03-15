@@ -28,30 +28,43 @@ class App extends Component {
       creator: '',
       roomCreatedAt: '',
       roomDesc: '',
+      roomKey: '',
+      currentRoom: '',
       content: '',
       messageCreatedAt: '',
       roomId: '',
       userName: '',
-      firebaseList: {},
+      roomsList: {},
       firebaseValuesArray: [],
-      firebaseUIDArray: []
+      roomsUIDArray: [],
+      messagesList: {}
     }
   }
   componentDidMount(){
     roomsRef.on('value', snap => {
       this.setState({
-        firebaseList: snap.val(),
-        firebaseUIDArray: Object.keys(snap.val())
+        roomsList: snap.val(),
+        roomsUIDArray: Object.keys(snap.val()),
+        roomKey: snap.key,
       }, () => {
-        console.log('firebaseUIDArray: ', this.state.firebaseUIDArray);
-        console.log('firebaseList: ', this.state.firebaseList);
+        console.log('roomsUIDArray: ', this.state.roomsUIDArray);
+        console.log('roomsList: ', this.state.roomsList);
+        console.log('roomKey: ', this.state.roomKey);
       });
     });
+    messagesRef.on('value', snap => {
+      this.setState({
+        messagesList: snap.val()
+      }, () => {
+        console.log('firebase messagesList: ', this.state.messagesList);
+      })
+    })
     //recreate another 'dbRef' that points to messages node.
     //room1 will be dynamic (whatever user clicks)
     //dbRef.orderByChild('roomName').equalTo('Room1').on('child_added', (snap) => {
     //  console.log('getRoom equalTo orderbychild(room1): ', snap.val());
     //})
+
   }
 
   handleSubmitRoom(){
@@ -70,17 +83,21 @@ class App extends Component {
   }
 
   handleSubmitMessage(){
+    //roomsRef; //go to child('rooms');
+    //var roomKey; //find currentRoom. Go to firebase db, findbychild, and GET THE KEY.
     messagesRef.push({
-      roomId: this.state.roomId,
+      roomId: this.state.roomId, //roomKey goes here
       content: this.state.content,
       userName: this.state.userName,
-      messageCreatedAt: this.state.messageCreatedAt
+      messageCreatedAt: this.state.messageCreatedAt,
+      messageRoomName: this.state.currentRoom
     });
     this.setState({
       roomId: '',
       content: '',
       userName: '',
-      messageCreatedAt: ''
+      messageCreatedAt: '',
+      messageRoomName: ''
     })
   }
 
@@ -107,7 +124,21 @@ class App extends Component {
       messageCreatedAt: moment().format('MMMM Do YYYY, hh:mm:ss a')
     })
   }
+  handleCurrentRoom(e){
+    this.setState({
+      currentRoom: e.target.innerHTML,
+    })
+    console.log("innerHTML: ", e.target.innerHTML)
+  }
+  getRoom(){
 
+    //this works! It queries ALL messages done in Room10. Now to make it dynamic...
+    //next: maybe -> save messageRef.orderBy... into a variable, and then display those variables to list all messages from such messageRoom
+    messagesRef.orderByChild('messageRoomName').equalTo(this.state.currentRoom).on('value', (snap) => {
+      console.log('get orderByChild(roomName): ', snap.val());
+    })
+
+  }
   render() {
     return (
       <div className="App">
@@ -115,7 +146,8 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>
         </div>
-        <h1 id="bigOne">I am a big one</h1>
+        <h1 id="bigOne">Current room: {this.state.currentRoom}</h1>
+        <h2>Room key: </h2>
         <h2>{moment().format('MMMM Do YYYY, hh:mm:ss a')}</h2>
         <p className="App-intro">
           Enter room info
@@ -139,7 +171,13 @@ class App extends Component {
 
         <p>Text: {this.state.text}</p>
 
-        <DisplayFirebaseValues removeItem={this.removeItem.bind(this)} firebaseList={this.state.firebaseList} />
+        <DisplayFirebaseValues
+          removeItem={this.removeItem.bind(this)}
+          handleCurrentRoom={this.handleCurrentRoom.bind(this)}
+          roomsList={this.state.roomsList}
+          currentRoom={this.state.currentRoom}
+          />
+        <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
       </div>
     );
   }

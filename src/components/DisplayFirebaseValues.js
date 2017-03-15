@@ -2,13 +2,12 @@ import React from 'react';
 
 class DisplayFirebaseValues extends React.Component{
   render(){
-
-    const firebaseUID = Object.keys(this.props.firebaseList).map((firebaseItem, index) => {
+    const firebaseUID = Object.keys(this.props.roomsList).map((firebaseItem, index) => {
       return <li key={index}><a href="#" onClick={() => this.props.removeItem(firebaseItem)}>X</a> {firebaseItem}</li>
     })
-    const firebaseListValues = Object.values(this.props.firebaseList);
-    const firebaseListRoomName = firebaseListValues.map((firebaseItem, index) => {
-      return <li key={index}>RoomName: {firebaseItem.roomName} | creator: {firebaseItem.creator} | room created at: {firebaseItem.roomCreatedAt} | roomDesc: {firebaseItem.roomDesc}</li>
+    const roomsListValues = Object.values(this.props.roomsList);
+    const roomsListRoomName = roomsListValues.map((firebaseItem, index) => {
+      return <li key={index}>RoomName: <a href="#" onClick={this.props.handleCurrentRoom}>{firebaseItem.roomName}</a> | roomkey: {Object.values(firebaseItem)}</li>
     })
     return (
       <div>
@@ -19,7 +18,7 @@ class DisplayFirebaseValues extends React.Component{
           </ul>
           <p>Firebase room info</p>
           <ul>
-            {firebaseListRoomName}
+            {roomsListRoomName}
           </ul>
         </div>
       </div>
