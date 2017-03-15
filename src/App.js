@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-//firebase attributes
 import * as firebase from 'firebase';
-//components
+import moment from 'moment';
 import DisplayFirebaseValues from './components/DisplayFirebaseValues';
 
 //config for firebase
@@ -25,7 +24,9 @@ class App extends Component {
     this.state = {
       text: '',
       roomName: '',
-      creator: '',
+      userName: '',
+      createdAt: '',
+      content: '',
       firebaseList: {},
       firebaseValuesArray: [],
       firebaseUIDArray: []
@@ -41,17 +42,23 @@ class App extends Component {
         console.log('firebaseList: ', this.state.firebaseList);
       });
     });
+    dbRef.orderByChild('roomName').equalTo('Room1').on('child_added', (snap) => {
+      console.log('getRoom equalTo orderbychild(room1): ', snap.val());
+    })
   }
 
   handleSubmitText(){
-    var pushedRef = dbRef.push({
+    dbRef.push({
       roomName: this.state.roomName,
-      creator: this.state.creator
+      userName: this.state.userName,
+      content: this.state.content,
+      createdAt: this.state.createdAt
     });
-    console.log('pushedRef: ', pushedRef.key);
     this.setState({
       roomName: '',
-      creator: '',
+      userName: '',
+      createdAt: '',
+      content: ''
     });
   }
 
@@ -65,15 +72,15 @@ class App extends Component {
       text: e.target.value
     })
   }
-  handleRoomName(e){
+  handleRoomInfo(e){
     this.setState({
-      roomName: e.target.value
+      [e.target.name]: e.target.value,
+      createdAt: moment().format('MMMM Do YYYY, hh:mm:ss a')
     })
   }
-  handleCreator(e){
-    this.setState({
-      creator: e.target.value
-    })
+
+  getRoom(){
+
   }
   render() {
     return (
@@ -83,16 +90,19 @@ class App extends Component {
           <h2>Welcome to React</h2>
         </div>
         <h1 id="bigOne">I am a big one</h1>
+        <h2>{moment().format('MMMM Do YYYY, hh:mm:ss a')}</h2>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-
-        <input type="text" ref="roomNameItem" value={this.state.roomName} placeholder="room name" onChange={this.handleRoomName.bind(this)}></input>
-        <input type="text" ref="creatorItem" value={this.state.creator} placeholder="creator name" onChange={this.handleCreator.bind(this)}></input>
-        <button onClick={this.handleSubmitText.bind(this)}>Add Room</button>
-
+        <form onSubmit={this.handleSubmitText.bind(this)} >
+          <input type="text" ref="roomNameItem" name="roomName" value={this.state.roomName} placeholder="room name" onChange={this.handleRoomInfo.bind(this)}></input>
+          <input type="text" ref="userNameItem" name="userName" value={this.state.userName} placeholder="username" onChange={this.handleRoomInfo.bind(this)}></input>
+          <input type="text" ref="contentItem" name="content" value={this.state.content} placeholder="content" onChange={this.handleRoomInfo.bind(this)}></input>
+          <input type="submit" value="Add Room" />
+        </form>
         <p>Text: {this.state.text}</p>
         <DisplayFirebaseValues removeItem={this.removeItem.bind(this)} firebaseList={this.state.firebaseList} />
+        <button onClick={this.getRoom.bind(this)}>GET THIS CHILD</button>
       </div>
     );
   }
