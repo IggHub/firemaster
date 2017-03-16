@@ -4,6 +4,7 @@ import './App.css';
 import * as firebase from 'firebase';
 import moment from 'moment';
 import DisplayFirebaseValues from './components/DisplayFirebaseValues';
+import DisplayMessages from './components/DisplayMessages';
 
 const config = {
   apiKey: "AIzaSyDyX1F_BohfqXWzDFFZfJgyo4MBjApbVyQ",
@@ -140,6 +141,13 @@ class App extends Component {
 
   }
   render() {
+    const displayMessages = this.state.currentRoom ?         <DisplayMessages
+              handleSubmitMessage={this.handleSubmitMessage.bind(this)}
+              handleMessageInfo={this.handleMessageInfo.bind(this)}
+              content={this.state.content}
+              roomId={this.state.roomId}
+              userName={this.state.userName}
+             /> : <div></div>
     return (
       <div className="App">
         <div className="App-header">
@@ -160,14 +168,7 @@ class App extends Component {
           <input type="submit" value="Add Room" />
         </form>
 
-        <p>Messages:</p>
-
-        <form onSubmit={this.handleSubmitMessage.bind(this)} >
-          <input type="text" ref="contentItem" name="content" value={this.state.content} placeholder="message content" onChange={this.handleMessageInfo.bind(this)} />
-          <input type="text" ref="roomIdItem" name="roomId" value={this.state.roomId} placeholder="roomId" onChange={this.handleMessageInfo.bind(this)} />
-          <input type="text" ref="userNameItem" name="userName" value={this.state.userName} placeholder="userName" onChange={this.handleMessageInfo.bind(this)} />
-          <input type="submit" value="Add message" />
-        </form>
+        {displayMessages}
 
         <p>Text: {this.state.text}</p>
 
