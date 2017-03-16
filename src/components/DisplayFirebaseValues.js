@@ -7,7 +7,7 @@ class DisplayFirebaseValues extends React.Component{
     })
     const roomsListValues = Object.values(this.props.roomsList);
     const roomsListRoomName = roomsListValues.map((firebaseItem, index) => {
-      return <li key={index}>RoomName: <a href="#" onClick={this.props.handleCurrentRoom}>{firebaseItem.roomName}</a> | roomkey: {Object.values(firebaseItem)}</li>
+      return <li key={index}>RoomName: <a href="#" onClick={this.props.handleCurrentRoom}>{firebaseItem.roomName}</a></li>
     })
     return (
       <div>

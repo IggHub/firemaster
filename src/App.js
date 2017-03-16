@@ -4,7 +4,8 @@ import './App.css';
 import * as firebase from 'firebase';
 import moment from 'moment';
 import DisplayFirebaseValues from './components/DisplayFirebaseValues';
-import DisplayMessages from './components/DisplayMessages';
+import MessageForm from './components/MessageForm';
+import DisplayEachChatroom from './components/DisplayEachChatroom';
 
 const config = {
   apiKey: "AIzaSyDyX1F_BohfqXWzDFFZfJgyo4MBjApbVyQ",
@@ -36,9 +37,10 @@ class App extends Component {
       roomId: '',
       userName: '',
       roomsList: {},
+      selectRoomInfo: {},
       firebaseValuesArray: [],
       roomsUIDArray: [],
-      messagesList: {}
+      messagesList: {},
     }
   }
   componentDidMount(){
@@ -132,16 +134,17 @@ class App extends Component {
     console.log("innerHTML: ", e.target.innerHTML)
   }
   getRoom(){
-
     //this works! It queries ALL messages done in Room10. Now to make it dynamic...
     //next: maybe -> save messageRef.orderBy... into a variable, and then display those variables to list all messages from such messageRoom
     messagesRef.orderByChild('messageRoomName').equalTo(this.state.currentRoom).on('value', (snap) => {
-      console.log('get orderByChild(roomName): ', snap.val());
+      this.setState({
+        selectRoomInfo: snap.val()
+      }, () => {console.log('selectRoomInfo: ', this.state.selectRoomInfo)})
     })
 
   }
   render() {
-    const displayMessages = this.state.currentRoom ?         <DisplayMessages
+    const messageForm = this.state.currentRoom ?         <MessageForm
               handleSubmitMessage={this.handleSubmitMessage.bind(this)}
               handleMessageInfo={this.handleMessageInfo.bind(this)}
               content={this.state.content}
@@ -168,7 +171,7 @@ class App extends Component {
           <input type="submit" value="Add Room" />
         </form>
 
-        {displayMessages}
+        {messageForm}
 
         <p>Text: {this.state.text}</p>
 
@@ -179,6 +182,8 @@ class App extends Component {
           currentRoom={this.state.currentRoom}
           />
         <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
+
+        <DisplayEachChatroom selectRoomInfo={this.state.selectRoomInfo}/>
       </div>
     );
   }
