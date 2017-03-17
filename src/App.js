@@ -6,6 +6,11 @@ import DisplayChatMessages from './components/DisplayChatMessages';
 import DisplayEachChatroom from './components/DisplayEachChatroom';
 import NewMessageForm from './components/NewMessageForm';
 import NewRoomForm from './components/NewRoomForm';
+import {
+  Grid,
+  Col,
+  Row
+} from 'react-bootstrap';
 
 
 const config = {
@@ -21,6 +26,10 @@ const dbRef = firebase.initializeApp(config).database().ref();
 const roomsRef = dbRef.child('rooms');
 const messagesRef = dbRef.child('messages');
 
+var obj = {
+  userName: 'iggy'
+}
+
 class App extends Component {
   //setup initial state
   constructor(){
@@ -34,8 +43,7 @@ class App extends Component {
       currentRoom: '',
       content: '',
       messageCreatedAt: '',
-      roomId: '',
-      userName: '',
+      userName: obj.userName,
       roomsList: {},
       selectRoomInfo: {},
       firebaseValuesArray: [],
@@ -81,16 +89,13 @@ class App extends Component {
 
   handleSubmitMessage(){
     messagesRef.push({
-      roomId: this.state.roomId,
       content: this.state.content,
       userName: this.state.userName,
       messageCreatedAt: this.state.messageCreatedAt,
       messageRoomName: this.state.currentRoom
     });
     this.setState({
-      roomId: '',
       content: '',
-      userName: '',
       messageCreatedAt: '',
       messageRoomName: ''
     })
@@ -129,8 +134,7 @@ class App extends Component {
               handleSubmitMessage={this.handleSubmitMessage.bind(this)}
               handleMessageInfo={this.handleMessageInfo.bind(this)}
               content={this.state.content}
-              roomId={this.state.roomId}
-              userName={this.state.userName}
+              userName={obj.userName}
              /> : <div></div>
     return (
       <div className="App">
@@ -139,23 +143,31 @@ class App extends Component {
         <p className="App-intro">
           Enter room info
         </p>
+        <Grid>
+          <Row>
+            <Col md={4}>
+              <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
+                roomName={this.state.roomName}
+                creator={obj.userName}
+                roomDesc={this.state.roomDesc}
+                handleRoomInfo={this.handleRoomInfo.bind(this)}
+                />
+              <DisplayChatMessages
+                removeItem={this.removeItem.bind(this)}
+                handleCurrentRoom={this.handleCurrentRoom.bind(this)}
+                roomsList={this.state.roomsList}
+                currentRoom={this.state.currentRoom}
+                />
+            </Col>
+            <Col md={8}>
 
 
-        <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
-          roomName={this.state.roomName}
-          creator={this.state.creator}
-          roomDesc={this.state.roomDesc}
-          handleRoomInfo={this.handleRoomInfo.bind(this)}
-          />
-        {messageForm}
-        <DisplayChatMessages
-          removeItem={this.removeItem.bind(this)}
-          handleCurrentRoom={this.handleCurrentRoom.bind(this)}
-          roomsList={this.state.roomsList}
-          currentRoom={this.state.currentRoom}
-          />
-        <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
-        <DisplayEachChatroom selectRoomInfo={this.state.selectRoomInfo}/>
+              <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
+              <DisplayEachChatroom selectRoomInfo={this.state.selectRoomInfo}/>
+              {messageForm}
+            </Col>
+          </Row>
+        </Grid>
       </div>
     );
   }
