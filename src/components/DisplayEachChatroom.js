@@ -1,17 +1,29 @@
 import React from 'react';
 
-class DisplayChatMessages extends React.Component{
+class DisplayEachChatroom extends React.Component{
   render(){
-      const selectRoomInfo = Object.values(this.props.selectRoomInfo);
-      const chatroomMessages = selectRoomInfo.map((chatroomMessage, index) => {
-        return <li key={index}>{chatroomMessage.userName}: {chatroomMessage.content}</li>
-      })
-    return(
+    const firebaseUID = Object.keys(this.props.roomsList).map((firebaseItem, index) => {
+      return <li key={index}><a href="#" onClick={() => this.props.removeItem(firebaseItem)}>X</a> {firebaseItem}</li>
+    })
+    const roomsListValues = Object.values(this.props.roomsList);
+    const roomsListRoomName = roomsListValues.map((firebaseItem, index) => {
+      return <li key={index}>RoomName: <a href="#" onClick={this.props.handleCurrentRoom}>{firebaseItem.roomName}</a></li>
+    })
+    return (
       <div>
-        {chatroomMessages}
+        <div>
+          <p>Firebase UID Keys:</p>
+          <ul>
+            {firebaseUID}
+          </ul>
+          <p>Firebase room info</p>
+          <ul>
+            {roomsListRoomName}
+          </ul>
+        </div>
       </div>
     )
   }
 }
 
-export default DisplayChatMessages;
+export default DisplayEachChatroom;

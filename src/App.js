@@ -152,18 +152,19 @@ class App extends Component {
                 roomDesc={this.state.roomDesc}
                 handleRoomInfo={this.handleRoomInfo.bind(this)}
                 />
-              <DisplayChatMessages
+              <DisplayEachChatroom
                 removeItem={this.removeItem.bind(this)}
                 handleCurrentRoom={this.handleCurrentRoom.bind(this)}
                 roomsList={this.state.roomsList}
                 currentRoom={this.state.currentRoom}
                 />
+
             </Col>
             <Col md={8}>
 
 
               <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
-              <DisplayEachChatroom selectRoomInfo={this.state.selectRoomInfo}/>
+              <DisplayChatMessages selectRoomInfo={this.state.selectRoomInfo}/>                
               {messageForm}
             </Col>
           </Row>
