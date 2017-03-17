@@ -1,6 +1,6 @@
 import React from 'react';
 
-class DisplayFirebaseValues extends React.Component{
+class DisplayChatMessages extends React.Component{
   render(){
     const firebaseUID = Object.keys(this.props.roomsList).map((firebaseItem, index) => {
       return <li key={index}><a href="#" onClick={() => this.props.removeItem(firebaseItem)}>X</a> {firebaseItem}</li>
@@ -26,4 +26,4 @@ class DisplayFirebaseValues extends React.Component{
   }
 }
 
-export default DisplayFirebaseValues
+export default DisplayChatMessages;

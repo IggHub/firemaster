@@ -1,6 +1,6 @@
 import React from 'react';
 
-class MessageForm extends React.Component{
+class NewMessageForm extends React.Component{
   render (){
     return (
       <div>
@@ -16,4 +16,4 @@ class MessageForm extends React.Component{
     )
   }
 }
-export default MessageForm;
+export default NewMessageForm;

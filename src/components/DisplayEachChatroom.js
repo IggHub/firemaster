@@ -1,10 +1,10 @@
 import React from 'react';
 
-class DisplayEachChatroom extends React.Component{
+class DisplayChatMessages extends React.Component{
   render(){
       const selectRoomInfo = Object.values(this.props.selectRoomInfo);
       const chatroomMessages = selectRoomInfo.map((chatroomMessage, index) => {
-        return <li key={index}>{chatroomMessage.content}</li>
+        return <li key={index}>{chatroomMessage.userName}: {chatroomMessage.content}</li>
       })
     return(
       <div>
@@ -14,4 +14,4 @@ class DisplayEachChatroom extends React.Component{
   }
 }
 
-export default DisplayEachChatroom;
+export default DisplayChatMessages;

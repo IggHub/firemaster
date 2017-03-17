@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import * as firebase from 'firebase';
 import moment from 'moment';
-import DisplayFirebaseValues from './components/DisplayFirebaseValues';
-import MessageForm from './components/MessageForm';
+import DisplayChatMessages from './components/DisplayChatMessages';
 import DisplayEachChatroom from './components/DisplayEachChatroom';
+import NewMessageForm from './components/NewMessageForm';
+import NewRoomForm from './components/NewRoomForm';
+
 
 const config = {
   apiKey: "AIzaSyDyX1F_BohfqXWzDFFZfJgyo4MBjApbVyQ",
@@ -25,7 +26,6 @@ class App extends Component {
   constructor(){
     super();
     this.state = {
-      text: '',
       roomName: '',
       creator: '',
       roomCreatedAt: '',
@@ -62,12 +62,6 @@ class App extends Component {
         console.log('firebase messagesList: ', this.state.messagesList);
       })
     })
-    //recreate another 'dbRef' that points to messages node.
-    //room1 will be dynamic (whatever user clicks)
-    //dbRef.orderByChild('roomName').equalTo('Room1').on('child_added', (snap) => {
-    //  console.log('getRoom equalTo orderbychild(room1): ', snap.val());
-    //})
-
   }
 
   handleSubmitRoom(){
@@ -86,10 +80,8 @@ class App extends Component {
   }
 
   handleSubmitMessage(){
-    //roomsRef; //go to child('rooms');
-    //var roomKey; //find currentRoom. Go to firebase db, findbychild, and GET THE KEY.
     messagesRef.push({
-      roomId: this.state.roomId, //roomKey goes here
+      roomId: this.state.roomId,
       content: this.state.content,
       userName: this.state.userName,
       messageCreatedAt: this.state.messageCreatedAt,
@@ -107,20 +99,12 @@ class App extends Component {
   removeItem(index){
     roomsRef.child(index).remove();
   }
-
-  //update state of text
-  handleTextState(e){
-    this.setState({
-      text: e.target.value
-    })
-  }
   handleRoomInfo(e){
     this.setState({
       [e.target.name]: e.target.value,
       roomCreatedAt: moment().format('MMMM Do YYYY, hh:mm:ss a')
     })
   }
-
   handleMessageInfo(e){
     this.setState({
       [e.target.name]: e.target.value,
@@ -134,17 +118,14 @@ class App extends Component {
     console.log("innerHTML: ", e.target.innerHTML)
   }
   getRoom(){
-    //this works! It queries ALL messages done in Room10. Now to make it dynamic...
-    //next: maybe -> save messageRef.orderBy... into a variable, and then display those variables to list all messages from such messageRoom
     messagesRef.orderByChild('messageRoomName').equalTo(this.state.currentRoom).on('value', (snap) => {
       this.setState({
         selectRoomInfo: snap.val()
       }, () => {console.log('selectRoomInfo: ', this.state.selectRoomInfo)})
     })
-
   }
   render() {
-    const messageForm = this.state.currentRoom ?         <MessageForm
+    const messageForm = this.state.currentRoom ?         <NewMessageForm
               handleSubmitMessage={this.handleSubmitMessage.bind(this)}
               handleMessageInfo={this.handleMessageInfo.bind(this)}
               content={this.state.content}
@@ -153,36 +134,27 @@ class App extends Component {
              /> : <div></div>
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <h1 id="bigOne">Current room: {this.state.currentRoom}</h1>
-        <h2>Room key: </h2>
+        <h1>Current room: {this.state.currentRoom}</h1>
         <h2>{moment().format('MMMM Do YYYY, hh:mm:ss a')}</h2>
         <p className="App-intro">
           Enter room info
         </p>
 
-        <form onSubmit={this.handleSubmitRoom.bind(this)} >
-          <input type="text" ref="roomNameItem" name="roomName" value={this.state.roomName} placeholder="room name" onChange={this.handleRoomInfo.bind(this)}></input>
-          <input type="text" ref="creatorItem" name="creator" value={this.state.creator} placeholder="creator" onChange={this.handleRoomInfo.bind(this)}></input>
-          <input type="text" ref="roomDescItem" name="roomDesc" value={this.state.roomDesc} placeholder="roomDesc" onChange={this.handleRoomInfo.bind(this)}></input>
-          <input type="submit" value="Add Room" />
-        </form>
 
+        <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
+          roomName={this.state.roomName}
+          creator={this.state.creator}
+          roomDesc={this.state.roomDesc}
+          handleRoomInfo={this.handleRoomInfo.bind(this)}
+          />
         {messageForm}
-
-        <p>Text: {this.state.text}</p>
-
-        <DisplayFirebaseValues
+        <DisplayChatMessages
           removeItem={this.removeItem.bind(this)}
           handleCurrentRoom={this.handleCurrentRoom.bind(this)}
           roomsList={this.state.roomsList}
           currentRoom={this.state.currentRoom}
           />
         <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
-
         <DisplayEachChatroom selectRoomInfo={this.state.selectRoomInfo}/>
       </div>
     );
