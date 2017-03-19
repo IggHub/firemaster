@@ -9,6 +9,7 @@ class DisplayEachChatroom extends React.Component{
     const roomsListRoomName = roomsListValues.map((firebaseItem, index) => {
       return <li key={index}>RoomName: <a href="#" onClick={this.props.handleCurrentRoom}>{firebaseItem.roomName}</a></li>
     })
+    console.log('roomslist: ', this.props.roomsList);
     return (
       <div>
         <div>

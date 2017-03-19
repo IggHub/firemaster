@@ -26,7 +26,7 @@ const dbRef = firebase.initializeApp(config).database().ref();
 const roomsRef = dbRef.child('rooms');
 const messagesRef = dbRef.child('messages');
 
-var obj = {
+let obj = {
   userName: 'iggy'
 }
 
@@ -164,7 +164,7 @@ class App extends Component {
 
 
               <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
-              <DisplayChatMessages selectRoomInfo={this.state.selectRoomInfo}/>                
+              <DisplayChatMessages selectRoomInfo={this.state.selectRoomInfo}/>
               {messageForm}
             </Col>
           </Row>
