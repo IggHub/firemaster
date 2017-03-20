@@ -161,8 +161,6 @@ class App extends Component {
 
             </Col>
             <Col md={8}>
-
-
               <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
               <DisplayChatMessages selectRoomInfo={this.state.selectRoomInfo}/>
               {messageForm}
