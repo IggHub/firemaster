@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 class DisplayEachChatroom extends React.Component{
   render(){
     const chatRooms = Object.keys(this.props.roomsList).map((firebaseItem, index) => {
@@ -13,7 +14,6 @@ class DisplayEachChatroom extends React.Component{
           <ul>
             {chatRooms}
           </ul>
-
         </div>
       </div>
     )

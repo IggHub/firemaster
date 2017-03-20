@@ -9,9 +9,9 @@ import NewRoomForm from './components/NewRoomForm';
 import {
   Grid,
   Col,
-  Row
+  Row,
+  Button
 } from 'react-bootstrap';
-
 
 const config = {
   apiKey: "AIzaSyDyX1F_BohfqXWzDFFZfJgyo4MBjApbVyQ",
@@ -31,14 +31,12 @@ let obj = {
 }
 
 class App extends Component {
-  //setup initial state
   constructor(){
     super();
     this.state = {
       roomName: '',
       creator: '',
       roomCreatedAt: '',
-      roomDesc: '',
       roomKey: '',
       currentRoom: '',
       content: '',
@@ -49,6 +47,7 @@ class App extends Component {
       firebaseValuesArray: [],
       roomsUIDArray: [],
       messagesList: {},
+      displayAddChatroomForm: false
     }
   }
   componentDidMount(){
@@ -71,22 +70,24 @@ class App extends Component {
       })
     })
   }
-
+  toggleAddChatroomDisplay(){
+    this.setState({
+      displayAddChatroomForm: !this.state.displayAddChatroomForm
+    })
+    console.log('display chatroom bool: ', this.state.displayAddChatroomForm);
+  }
   handleSubmitRoom(){
     roomsRef.push({
       roomName: this.state.roomName,
       creator: this.state.creator,
-      roomDesc: this.state.roomDesc,
       roomCreatedAt: this.state.roomCreatedAt
     });
     this.setState({
       roomName: '',
       creator: '',
       roomCreatedAt: '',
-      roomDesc: ''
     });
   }
-
   handleSubmitMessage(){
     messagesRef.push({
       content: this.state.content,
@@ -100,7 +101,6 @@ class App extends Component {
       messageRoomName: ''
     })
   }
-
   removeItem(index){
     roomsRef.child(index).remove();
   }
@@ -136,6 +136,11 @@ class App extends Component {
               content={this.state.content}
               userName={obj.userName}
              /> : <div></div>
+    const chatForm = this.state.displayAddChatroomForm ?               <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
+                    roomName={this.state.roomName}
+                    creator={obj.userName}
+                    handleRoomInfo={this.handleRoomInfo.bind(this)}
+                    /> : <div></div>
     return (
       <div className="App">
         <h1>Current room: {this.state.currentRoom}</h1>
@@ -146,19 +151,15 @@ class App extends Component {
         <Grid>
           <Row>
             <Col md={4}>
-              <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
-                roomName={this.state.roomName}
-                creator={obj.userName}
-                roomDesc={this.state.roomDesc}
-                handleRoomInfo={this.handleRoomInfo.bind(this)}
-                />
+
               <DisplayEachChatroom
                 removeItem={this.removeItem.bind(this)}
                 handleCurrentRoom={this.handleCurrentRoom.bind(this)}
                 roomsList={this.state.roomsList}
                 currentRoom={this.state.currentRoom}
                 />
-
+              <Button bsStyle="primary" onClick={this.toggleAddChatroomDisplay.bind(this)}>Add Room</Button>
+              {chatForm}
             </Col>
             <Col md={8}>
               <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
