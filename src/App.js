@@ -7,12 +7,13 @@ import DisplayChatMessages from './components/DisplayChatMessages';
 import DisplayEachChatroom from './components/DisplayEachChatroom';
 import NewMessageForm from './components/NewMessageForm';
 import NewRoomForm from './components/NewRoomForm';
-import InputUserName from './components/InputUserName';
+//import InputUserName from './components/InputUserName';
 import {
   Grid,
   Col,
   Row,
-  Button
+  Button,
+  Modal
 } from 'react-bootstrap';
 
 const config = {
@@ -47,7 +48,8 @@ class App extends Component {
       roomsUIDArray: [],
       messagesList: {},
       displayAddChatroomForm: false,
-      userId: ''
+      userId: '',
+      showModal: false
     }
   }
   componentDidMount(){
@@ -70,7 +72,12 @@ class App extends Component {
       })
     });
   }
-
+  openModal(){
+    this.setState({showModal: true}, () => {console.log(this.state.showModal)});
+  }
+  closeModal(){
+    this.setState({showModal: false})
+  }
   toggleAddChatroomDisplay(){
     this.setState({
       displayAddChatroomForm: !this.state.displayAddChatroomForm
@@ -102,13 +109,14 @@ class App extends Component {
       messageRoomName: ''
     })
   }
-  handleSubmitUsername = (e) => {
-//    cookie.save('username', username)
+  handleSubmitUsername(e) {
     if (e) {
       e.preventDefault();
     }
-    //const name = this.refs.userNameItem.value;
-    console.log('username: ', this.inputValue.value);
+
+    const username = this.inputValuez.value;
+    cookie.save('username', username);
+    console.log('username: ', username);
   }
   handleEnterUsername(e){
     this.setState({
@@ -144,6 +152,13 @@ class App extends Component {
       }, () => {console.log('selectRoomInfo: ', this.state.selectRoomInfo)})
     })
   }
+  gimmecookies(){
+    const cookieUsername = cookie.load('username');
+    console.log('cookie username: ', cookieUsername);
+  }
+  logout(){
+    cookie.remove('username');
+  }
   render() {
     const messageForm = this.state.currentRoom ?         <NewMessageForm
               handleSubmitMessage={this.handleSubmitMessage.bind(this)}
@@ -156,14 +171,27 @@ class App extends Component {
                     /> : <div></div>
     return (
       <div className="App">
+        <Button bsStyle="primary" bsSize="large" onClick={this.openModal.bind(this)}>Demo modal</Button>
+
+        <Modal show={this.state.showModal} onHide={this.closeModal.bind(this)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Some heading</Modal.Title>
+            <Modal.Body>
+
+              @<input type="text" placeholder="username"
+                ref={(node) => {this.inputValuez = node}}
+                />
+              <button onClick={this.handleSubmitUsername.bind(this)}>Set Username</button>
+
+            </Modal.Body>
+          </Modal.Header>
+        </Modal>
+
         <h1>Current room: {this.state.currentRoom}</h1>
         <h2>{moment().format('MMMM Do YYYY, hh:mm:ss a')}</h2>
 
-
-          <input type="text" id="textbox" placeholder="username"
-            ref={ function(node){ this.inputValue = node }.bind(this) }
-          />
-        <button onClick={this.handleSubmitUsername}>Get it</button>
+        <button onClick={this.gimmecookies}>Cookie name</button>
+        <button onClick={this.logout}>Log out</button>
         <Grid>
           <Row>
             <Col md={4}>
