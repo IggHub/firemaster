@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import './App.css';
 import * as firebase from 'firebase';
 import moment from 'moment';
+import cookie from 'react-cookie';
 import DisplayChatMessages from './components/DisplayChatMessages';
 import DisplayEachChatroom from './components/DisplayEachChatroom';
 import NewMessageForm from './components/NewMessageForm';
 import NewRoomForm from './components/NewRoomForm';
+import InputUserName from './components/InputUserName';
 import {
   Grid,
   Col,
@@ -26,9 +28,6 @@ const dbRef = firebase.initializeApp(config).database().ref();
 const roomsRef = dbRef.child('rooms');
 const messagesRef = dbRef.child('messages');
 
-let obj = {
-  userName: 'iggy'
-}
 
 class App extends Component {
   constructor(){
@@ -41,13 +40,14 @@ class App extends Component {
       currentRoom: '',
       content: '',
       messageCreatedAt: '',
-      userName: obj.userName,
+      userName: '',
       roomsList: {},
       selectRoomInfo: {},
       firebaseValuesArray: [],
       roomsUIDArray: [],
       messagesList: {},
-      displayAddChatroomForm: false
+      displayAddChatroomForm: false,
+      userId: ''
     }
   }
   componentDidMount(){
@@ -68,13 +68,15 @@ class App extends Component {
       }, () => {
         console.log('firebase messagesList: ', this.state.messagesList);
       })
-    })
+    });
   }
+
   toggleAddChatroomDisplay(){
     this.setState({
       displayAddChatroomForm: !this.state.displayAddChatroomForm
     })
     console.log('display chatroom bool: ', this.state.displayAddChatroomForm);
+    console.log(this.state.userId);
   }
   handleSubmitRoom(){
     roomsRef.push({
@@ -91,7 +93,6 @@ class App extends Component {
   handleSubmitMessage(){
     messagesRef.push({
       content: this.state.content,
-      userName: this.state.userName,
       messageCreatedAt: this.state.messageCreatedAt,
       messageRoomName: this.state.currentRoom
     });
@@ -99,6 +100,19 @@ class App extends Component {
       content: '',
       messageCreatedAt: '',
       messageRoomName: ''
+    })
+  }
+  handleSubmitUsername = (e) => {
+//    cookie.save('username', username)
+    if (e) {
+      e.preventDefault();
+    }
+    //const name = this.refs.userNameItem.value;
+    console.log('username: ', this.inputValue.value);
+  }
+  handleEnterUsername(e){
+    this.setState({
+      userName: e.target.value
     })
   }
   removeItem(index){
@@ -122,6 +136,7 @@ class App extends Component {
     })
     console.log("innerHTML: ", e.target.innerHTML)
   }
+
   getRoom(){
     messagesRef.orderByChild('messageRoomName').equalTo(this.state.currentRoom).on('value', (snap) => {
       this.setState({
@@ -134,20 +149,21 @@ class App extends Component {
               handleSubmitMessage={this.handleSubmitMessage.bind(this)}
               handleMessageInfo={this.handleMessageInfo.bind(this)}
               content={this.state.content}
-              userName={obj.userName}
              /> : <div></div>
     const chatForm = this.state.displayAddChatroomForm ?               <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
                     roomName={this.state.roomName}
-                    creator={obj.userName}
                     handleRoomInfo={this.handleRoomInfo.bind(this)}
                     /> : <div></div>
     return (
       <div className="App">
         <h1>Current room: {this.state.currentRoom}</h1>
         <h2>{moment().format('MMMM Do YYYY, hh:mm:ss a')}</h2>
-        <p className="App-intro">
-          Enter room info
-        </p>
+
+
+          <input type="text" id="textbox" placeholder="username"
+            ref={ function(node){ this.inputValue = node }.bind(this) }
+          />
+        <button onClick={this.handleSubmitUsername}>Get it</button>
         <Grid>
           <Row>
             <Col md={4}>
