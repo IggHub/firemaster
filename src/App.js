@@ -28,7 +28,7 @@ const config = {
 const dbRef = firebase.initializeApp(config).database().ref();
 const roomsRef = dbRef.child('rooms');
 const messagesRef = dbRef.child('messages');
-
+//const timeStamp = firebase.initializeApp(config).database().ServerValue.TIMESTAMP;
 
 class App extends Component {
   constructor(){
@@ -95,7 +95,7 @@ class App extends Component {
     roomsRef.push({
       roomName: this.state.roomName,
       creator: this.state.userName,
-      roomCreatedAt: this.state.roomCreatedAt
+      roomCreatedAt: firebase.database.ServerValue.TIMESTAMP
     });
     this.setState({
       roomName: '',
