@@ -35,7 +35,6 @@ class App extends Component {
     super();
     this.state = {
       roomName: '',
-      creator: '',
       roomCreatedAt: '',
       roomKey: '',
       currentRoom: '',
@@ -72,6 +71,13 @@ class App extends Component {
       })
     });
   }
+
+  componentWillMount(){
+    const cookieUsername = cookie.load('username');
+    this.setState({
+      userName: cookieUsername
+    }, () => {console.log('saved cookieUsername: ', this.state.userName)})
+  }
   openModal(){
     this.setState({showModal: true}, () => {console.log(this.state.showModal)});
   }
@@ -82,18 +88,17 @@ class App extends Component {
     this.setState({
       displayAddChatroomForm: !this.state.displayAddChatroomForm
     })
-    console.log('display chatroom bool: ', this.state.displayAddChatroomForm);
-    console.log(this.state.userId);
+    //console.log('display chatroom bool: ', this.state.displayAddChatroomForm);
+    //console.log(this.state.userId);
   }
   handleSubmitRoom(){
     roomsRef.push({
       roomName: this.state.roomName,
-      creator: this.state.creator,
+      creator: this.state.userName,
       roomCreatedAt: this.state.roomCreatedAt
     });
     this.setState({
       roomName: '',
-      creator: '',
       roomCreatedAt: '',
     });
   }
@@ -101,7 +106,8 @@ class App extends Component {
     messagesRef.push({
       content: this.state.content,
       messageCreatedAt: this.state.messageCreatedAt,
-      messageRoomName: this.state.currentRoom
+      messageRoomName: this.state.currentRoom,
+      userName: this.state.userName
     });
     this.setState({
       content: '',
@@ -113,11 +119,12 @@ class App extends Component {
     if (e) {
       e.preventDefault();
     }
-
     const username = this.inputValuez.value;
+    this.setState({userName: username})
     cookie.save('username', username);
-    console.log('username: ', username);
+    //console.log('username: ', username);
   }
+
   handleEnterUsername(e){
     this.setState({
       userName: e.target.value
@@ -150,8 +157,6 @@ class App extends Component {
     })
   }
   gimmecookies(){
-    const cookieUsername = cookie.load('username');
-    console.log('cookie username: ', cookieUsername);
   }
   logout(){
     cookie.remove('username');
@@ -161,9 +166,11 @@ class App extends Component {
               handleSubmitMessage={this.handleSubmitMessage.bind(this)}
               handleMessageInfo={this.handleMessageInfo.bind(this)}
               content={this.state.content}
+              userName={this.state.userName}
              /> : <div></div>
     const chatForm = this.state.displayAddChatroomForm ?               <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
                     roomName={this.state.roomName}
+                    userName={this.state.userName}
                     handleRoomInfo={this.handleRoomInfo.bind(this)}
                     /> : <div></div>
     return (
