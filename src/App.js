@@ -143,9 +143,6 @@ class App extends Component {
       currentRoom: e.target.innerHTML,
     })
     console.log("innerHTML: ", e.target.innerHTML)
-  }
-
-  getRoom(){
     messagesRef.orderByChild('messageRoomName').equalTo(this.state.currentRoom).on('value', (snap) => {
       this.setState({
         selectRoomInfo: snap.val()
@@ -171,7 +168,7 @@ class App extends Component {
                     /> : <div></div>
     return (
       <div className="App">
-        <Button bsStyle="primary" bsSize="large" onClick={this.openModal.bind(this)}>Demo modal</Button>
+        <Button bsStyle="primary" bsSize="large" onClick={this.openModal.bind(this)}>Set username</Button>
 
         <Modal show={this.state.showModal} onHide={this.closeModal.bind(this)}>
           <Modal.Header closeButton>
@@ -206,7 +203,6 @@ class App extends Component {
               {chatForm}
             </Col>
             <Col md={8}>
-              <button onClick={this.getRoom.bind(this)}>Click to get info from Current Room</button>
               <DisplayChatMessages selectRoomInfo={this.state.selectRoomInfo}/>
               {messageForm}
             </Col>
