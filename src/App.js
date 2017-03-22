@@ -121,7 +121,9 @@ class App extends Component {
     }
     const username = this.inputValuez.value;
     this.setState({userName: username})
-    cookie.save('username', username);
+    cookie.save('username', username, {
+      maxAge: 86400
+    });
     //console.log('username: ', username);
   }
 
@@ -157,6 +159,8 @@ class App extends Component {
     })
   }
   gimmecookies(){
+    const cookieName = cookie.load('username');
+    console.log('cookie username: ', cookieName);
   }
   logout(){
     cookie.remove('username');
