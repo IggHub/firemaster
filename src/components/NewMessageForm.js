@@ -1,11 +1,13 @@
 import React from 'react';
-
+const contentStyle = {
+  width: '100%'
+}
 class NewMessageForm extends React.Component{
   render (){
     return (
       <div>
         <form onSubmit={this.props.handleSubmitMessage} >
-          <input type="text" ref="contentItem" name="content" value={this.props.content} placeholder="message content" onChange={this.props.handleMessageInfo} />
+          <input type="text" style={contentStyle} ref="contentItem" name="content" value={this.props.content} placeholder="message content" onChange={this.props.handleMessageInfo} />
           <input type="text" ref="userNameItem" name="userName" value={this.props.userName} placeholder="userName" onChange={this.props.handleMessageInfo} />
           <input type="submit" value="Add message" />
         </form>

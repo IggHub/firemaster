@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import './Custom.css';
 import * as firebase from 'firebase';
 import moment from 'moment';
 import cookie from 'react-cookie';
@@ -29,6 +30,30 @@ const dbRef = firebase.initializeApp(config).database().ref();
 const roomsRef = dbRef.child('rooms');
 const messagesRef = dbRef.child('messages');
 //const timeStamp = firebase.initializeApp(config).database().ServerValue.TIMESTAMP;
+
+const leftSideStyle = {
+  backgroundColor: "#65B6BC",
+  position: 'fixed',
+  top: '0',
+  bottom: '0',
+  left: '0',
+  overflow: 'hidden',
+};
+
+const rightSideStyle = {
+  backgroundColor: "#EDFFF6",
+  position: 'fixed',
+  top: '0',
+  bottom: '0',
+  right: '0',
+  overflow: 'hidden'
+};
+
+const messageFormStyle = {
+  position: 'fixed',
+  bottom: '0',
+  right: '0',
+};
 
 class App extends Component {
   constructor(){
@@ -166,43 +191,41 @@ class App extends Component {
     cookie.remove('username');
   }
   render() {
-    const messageForm = this.state.currentRoom ?         <NewMessageForm
+    const messageForm = this.state.currentRoom ? <NewMessageForm
               handleSubmitMessage={this.handleSubmitMessage.bind(this)}
               handleMessageInfo={this.handleMessageInfo.bind(this)}
               content={this.state.content}
               userName={this.state.userName}
              /> : <div></div>
-    const chatForm = this.state.displayAddChatroomForm ?               <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
+    const chatForm = this.state.displayAddChatroomForm ? <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
                     roomName={this.state.roomName}
                     userName={this.state.userName}
                     handleRoomInfo={this.handleRoomInfo.bind(this)}
                     /> : <div></div>
     return (
       <div className="App">
-        <Button bsStyle="primary" bsSize="large" onClick={this.openModal.bind(this)}>Set username</Button>
 
-        <Modal show={this.state.showModal} onHide={this.closeModal.bind(this)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Some heading</Modal.Title>
-            <Modal.Body>
+        <div className="test-header">Test header</div>
+        {/*Modal to get username input*/}
 
-              @<input type="text" placeholder="username"
-                ref={(node) => {this.inputValuez = node}}
-                />
-              <button onClick={this.handleSubmitUsername.bind(this)}>Set Username</button>
 
-            </Modal.Body>
-          </Modal.Header>
-        </Modal>
-
-        <h1>Current room: {this.state.currentRoom}</h1>
-        <h2>{moment().format('MMMM Do YYYY, hh:mm:ss a')}</h2>
-
-        <button onClick={this.gimmecookies}>Cookie name</button>
-        <button onClick={this.logout}>Log out</button>
         <Grid>
+
           <Row>
-            <Col md={4}>
+            <Col md={4} style={leftSideStyle}>
+              <Button bsStyle="primary" bsSize="large" onClick={this.openModal.bind(this)}>Set username</Button>
+                <Modal show={this.state.showModal} onHide={this.closeModal.bind(this)}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Some heading</Modal.Title>
+                    <Modal.Body>
+                      @<input type="text" placeholder="username"
+                        ref={(node) => {this.inputValuez = node}}
+                        />
+                      <button onClick={this.handleSubmitUsername.bind(this)}>Set Username</button>
+                    </Modal.Body>
+                  </Modal.Header>
+                </Modal>
+              <button onClick={this.gimmecookies}>Cookie name</button>
 
               <DisplayEachChatroom
                 removeItem={this.removeItem.bind(this)}
@@ -213,9 +236,21 @@ class App extends Component {
               <Button bsStyle="primary" onClick={this.toggleAddChatroomDisplay.bind(this)}>Add Room</Button>
               {chatForm}
             </Col>
-            <Col md={8}>
+
+            <Col md={8} style={rightSideStyle}>
+              <button onClick={this.logout}>Log out</button>
               <DisplayChatMessages selectRoomInfo={this.state.selectRoomInfo}/>
-              {messageForm}
+              <div style={messageFormStyle}>
+                {/*temp*/}
+                <NewMessageForm
+                          handleSubmitMessage={this.handleSubmitMessage.bind(this)}
+                          handleMessageInfo={this.handleMessageInfo.bind(this)}
+                          content={this.state.content}
+                          userName={this.state.userName}
+                         />
+                {/*temp^*/}
+                {messageForm}
+              </div>
             </Col>
           </Row>
         </Grid>
