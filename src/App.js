@@ -14,7 +14,7 @@ import {
   Col,
   Row,
   Button,
-  Modal
+  Modal,
 } from 'react-bootstrap';
 
 const config = {
@@ -30,30 +30,6 @@ const dbRef = firebase.initializeApp(config).database().ref();
 const roomsRef = dbRef.child('rooms');
 const messagesRef = dbRef.child('messages');
 //const timeStamp = firebase.initializeApp(config).database().ServerValue.TIMESTAMP;
-
-const leftSideStyle = {
-  backgroundColor: "#65B6BC",
-  position: 'fixed',
-  top: '0',
-  bottom: '0',
-  left: '0',
-  overflow: 'hidden',
-};
-
-const rightSideStyle = {
-  backgroundColor: "#EDFFF6",
-  position: 'fixed',
-  top: '0',
-  bottom: '0',
-  right: '0',
-  overflow: 'hidden'
-};
-
-const messageFormStyle = {
-  position: 'fixed',
-  bottom: '0',
-  right: '0',
-};
 
 class App extends Component {
   constructor(){
@@ -116,7 +92,10 @@ class App extends Component {
     //console.log('display chatroom bool: ', this.state.displayAddChatroomForm);
     //console.log(this.state.userId);
   }
-  handleSubmitRoom(){
+  handleSubmitRoom(e){
+    if(e){
+      e.preventDefault();
+    }
     roomsRef.push({
       roomName: this.state.roomName,
       creator: this.state.userName,
@@ -127,7 +106,10 @@ class App extends Component {
       roomCreatedAt: '',
     });
   }
-  handleSubmitMessage(){
+  handleSubmitMessage(e){
+    if (e) {
+      e.preventDefault();
+    }
     messagesRef.push({
       content: this.state.content,
       messageCreatedAt: this.state.messageCreatedAt,
@@ -145,7 +127,7 @@ class App extends Component {
       e.preventDefault();
     }
     const username = this.inputValuez.value;
-    this.setState({userName: username})
+    this.setState({userName: username});
     cookie.save('username', username, {
       maxAge: 86400
     });
@@ -189,32 +171,26 @@ class App extends Component {
   }
   logout(){
     cookie.remove('username');
+    this.setState({
+      userName: ''
+    })
   }
   render() {
-    const messageForm = this.state.currentRoom ? <NewMessageForm
-              handleSubmitMessage={this.handleSubmitMessage.bind(this)}
-              handleMessageInfo={this.handleMessageInfo.bind(this)}
-              content={this.state.content}
-              userName={this.state.userName}
-             /> : <div></div>
+
     const chatForm = this.state.displayAddChatroomForm ? <NewRoomForm handleSubmitRoom={this.handleSubmitRoom.bind(this)}
                     roomName={this.state.roomName}
                     userName={this.state.userName}
                     handleRoomInfo={this.handleRoomInfo.bind(this)}
                     /> : <div></div>
     return (
-      <div className="App">
-
-        <div className="test-header">Test header</div>
-        {/*Modal to get username input*/}
-
+      <div className="fill">
 
         <Grid>
-
           <Row>
-            <Col md={4} style={leftSideStyle}>
+            <Col md={4} className="leftSide">
               <Button bsStyle="primary" bsSize="large" onClick={this.openModal.bind(this)}>Set username</Button>
-                <Modal show={this.state.showModal} onHide={this.closeModal.bind(this)}>
+
+              <Modal show={this.state.showModal} onHide={this.closeModal.bind(this)}>
                   <Modal.Header closeButton>
                     <Modal.Title>Some heading</Modal.Title>
                     <Modal.Body>
@@ -225,6 +201,7 @@ class App extends Component {
                     </Modal.Body>
                   </Modal.Header>
                 </Modal>
+
               <button onClick={this.gimmecookies}>Cookie name</button>
 
               <DisplayEachChatroom
@@ -237,23 +214,30 @@ class App extends Component {
               {chatForm}
             </Col>
 
-            <Col md={8} style={rightSideStyle}>
-              <button onClick={this.logout}>Log out</button>
+            <Col md={8} className="rightSide">
+              <Row>
+                <Col md={8}></Col>
+                <Col md={4}>
+                  <span>Hello, {this.state.userName}. You are in room {this.state.currentRoom}</span>
+                  <button onClick={this.logout.bind(this)}>Log out</button>
+                </Col>
+              </Row>
               <DisplayChatMessages selectRoomInfo={this.state.selectRoomInfo}/>
-              <div style={messageFormStyle}>
-                {/*temp*/}
-                <NewMessageForm
-                          handleSubmitMessage={this.handleSubmitMessage.bind(this)}
-                          handleMessageInfo={this.handleMessageInfo.bind(this)}
-                          content={this.state.content}
-                          userName={this.state.userName}
-                         />
-                {/*temp^*/}
-                {messageForm}
-              </div>
+
+            <div className="chatSubmitContainer">
+              <NewMessageForm
+                handleSubmitMessage={this.handleSubmitMessage.bind(this)}
+                handleMessageInfo={this.handleMessageInfo.bind(this)}
+                content={this.state.content}
+                userName={this.state.userName}
+                className="chatSubmit"
+               />
+            </div>
+
             </Col>
           </Row>
         </Grid>
+
       </div>
     );
   }
